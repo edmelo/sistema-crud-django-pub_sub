@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema CRUD - Django</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="bi bi-database"></i> Sistema CRUD
+            </a>
+            <div class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <a class="nav-link" href="{% url 'usuarios:list' %}">
+                        <i class="bi bi-people"></i> Usuários
+                    </a>
+                    <a class="nav-link" href="{% url 'produtos:list' %}">
+                        <i class="bi bi-box"></i> Produtos
+                    </a>
+                    <a class="nav-link" href="{% url 'pedidos:list' %}">
+                        <i class="bi bi-cart"></i> Pedidos
+                    </a>
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ user.get_full_name|default:user.username }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/admin/">
+                                <i class="bi bi-gear"></i> Admin
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'usuarios:logout' %}">
+                                <i class="bi bi-box-arrow-right"></i> Sair
+                            </a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a class="nav-link" href="{% url 'usuarios:login' %}">
+                        <i class="bi bi-box-arrow-in-right"></i> Login
+                    </a>
+                    <a class="nav-link" href="{% url 'usuarios:register' %}">
+                        <i class="bi bi-person-plus"></i> Registrar
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row">
+            <div class="col-12">
+                <div class="jumbotron bg-primary text-white p-5 rounded">
+                    <h1 class="display-4">
+                        <i class="bi bi-gear"></i> Sistema CRUD Django
+                    </h1>
+                    <p class="lead">
+                        Sistema completo de gerenciamento com arquitetura MVC/MVT,
+                        operações CRUD, microsserviços e deploy AWS.
+                    </p>
+                    <hr class="my-4">
+                    <p class="mb-0">
+                        <strong>Desenvolvido por:</strong> Ednaldo Batista de Melo e Carolline Dias Pena
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5><i class="bi bi-people"></i> Usuários</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Gerenciamento completo de usuários do sistema.</p>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'usuarios:list' %}" class="btn btn-info">
+                                <i class="bi bi-list"></i> Ver Usuários
+                            </a>
+                        {% else %}
+                            <a href="{% url 'usuarios:login' %}" class="btn btn-info">
+                                <i class="bi bi-box-arrow-in-right"></i> Fazer Login
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5><i class="bi bi-box"></i> Produtos</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Catálogo de produtos com controle de estoque.</p>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'produtos:list' %}" class="btn btn-success">
+                                <i class="bi bi-list"></i> Ver Produtos
+                            </a>
+                        {% else %}
+                            <a href="{% url 'usuarios:login' %}" class="btn btn-success">
+                                <i class="bi bi-box-arrow-in-right"></i> Fazer Login
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-warning text-white">
+                        <h5><i class="bi bi-cart"></i> Pedidos</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Sistema de pedidos com processamento assíncrono.</p>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'pedidos:list' %}" class="btn btn-warning">
+                                <i class="bi bi-list"></i> Ver Pedidos
+                            </a>
+                        {% else %}
+                            <a href="{% url 'usuarios:login' %}" class="btn btn-warning">
+                                <i class="bi bi-box-arrow-in-right"></i> Fazer Login
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5><i class="bi bi-info-circle"></i> Informações do Sistema</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>🎯 Requisitos Atendidos:</h6>
+                                <ul class="list-unstyled">
+                                    <li>✅ Arquitetura MVC/MVT</li>
+                                    <li>✅ CRUD em 3 entidades</li>
+                                    <li>✅ Banco SQLite otimizado</li>
+                                    <li>✅ Sistema Publish-Subscribe</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>🚀 Tecnologias:</h6>
+                                <ul class="list-unstyled">
+                                    <li>• Django 4.2.7</li>
+                                    <li>• Django REST Framework</li>
+                                    <li>• Bootstrap 5</li>
+                                    <li>• AWS Lambda (Serverless)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% load static %}
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
