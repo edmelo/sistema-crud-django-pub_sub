@@ -1,0 +1,13 @@
+-r base.txt
+
+# Debug e desenvolvimento
+django-debug-toolbar==4.2.0
+
+# Testes
+pytest==7.4.3
+pytest-django==4.5.2
+
+# Formatação de código
+black==23.9.1
+flake8==6.1.0
+isort==5.12.0
