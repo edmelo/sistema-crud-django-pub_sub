@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalhe do Produto</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Produto #{{ produto.id }}</h2>
+    <div>
+      <a href="{% url 'produtos:update' produto.id %}" class="btn btn-warning">Editar</a>
+      <a href="{% url 'produtos:delete' produto.id %}" class="btn btn-danger">Excluir</a>
+      <a href="{% url 'produtos:list' %}" class="btn btn-secondary">Voltar</a>
+    </div>
+  </div>
+
+  <dl class="row">
+    <dt class="col-sm-3">Nome</dt><dd class="col-sm-9">{{ produto.nome }}</dd>
+    <dt class="col-sm-3">Categoria</dt><dd class="col-sm-9">{{ produto.categoria }}</dd>
+    <dt class="col-sm-3">Preço</dt><dd class="col-sm-9">R$ {{ produto.preco }}</dd>
+    <dt class="col-sm-3">Estoque</dt><dd class="col-sm-9">{{ produto.estoque }}</dd>
+    <dt class="col-sm-3">Ativo</dt><dd class="col-sm-9">{{ produto.ativo|yesno:"Sim,Não" }}</dd>
+    <dt class="col-sm-3">Descrição</dt><dd class="col-sm-9">{{ produto.descricao|default:"-" }}</dd>
+  </dl>
+</div>
+</body>
+</html>
