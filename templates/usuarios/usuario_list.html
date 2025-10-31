@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usuários</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Usuários</h2>
+    <div>
+      <form class="d-flex" method="get">
+        <input type="text" name="search" value="{{ request.GET.search }}" class="form-control me-2" placeholder="Buscar...">
+        <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+      </form>
+    </div>
+    <a href="{% url 'usuarios:create' %}" class="btn btn-primary">Novo Usuário</a>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Usuário</th>
+        <th>Nome</th>
+        <th>E-mail</th>
+        <th>Telefone</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in usuarios %}
+      <tr>
+        <td>{{ u.id }}</td>
+        <td><a href="{% url 'usuarios:detail' u.id %}">{{ u.username }}</a></td>
+        <td>{{ u.get_full_name|default:'-' }}</td>
+        <td>{{ u.email|default:'-' }}</td>
+        <td>{{ u.telefone|default:'-' }}</td>
+        <td>
+          <a href="{% url 'usuarios:update' u.id %}" class="btn btn-sm btn-warning">Editar</a>
+          <a href="{% url 'usuarios:delete' u.id %}" class="btn btn-sm btn-danger">Desativar</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center">Nenhum usuário encontrado.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="/" class="btn btn-secondary">Voltar para Home</a>
+</div>
+</body>
+</html>
