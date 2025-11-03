@@ -1,6 +1,8 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from apps.core.pubsub import pubsub_manager, SystemEvents
+from django.conf import settings
+from apps.core.pubsub import pubsub_manager, SystemEvents, event_handler
+from apps.core.email import send_system_email
 from .models import Produto
 
 
@@ -37,3 +39,33 @@ def produto_deleted(sender, instance: Produto, **kwargs):
         'id': instance.id,
         'nome': instance.nome,
     })
+
+
+# ==========================
+# Handlers de e-mail (Pub/Sub)
+# ==========================
+
+def _admin_emails():
+    # Usa ADMINS se configurado; fallback para EMAIL_HOST_USER
+    admins = getattr(settings, 'ADMINS', None)
+    if admins:
+        return [email for _, email in admins if email]
+    default = getattr(settings, 'EMAIL_HOST_USER', None)
+    return [default] if default else []
+
+
+@event_handler(SystemEvents.PRODUTO_ESTOQUE_BAIXO)
+def handle_produto_estoque_baixo(data):
+    """Notifica administradores quando estoque está baixo"""
+    nome = data.get('nome')
+    estoque = data.get('estoque')
+    destinatarios = _admin_emails()
+    if not destinatarios:
+        return
+
+    subject = f"Estoque baixo: {nome}"
+    message = (
+        f"Atenção,\n\nO produto '{nome}' está com estoque baixo (quantidade atual: {estoque}).\n"
+        "Considere realizar reposição."
+    )
+    send_system_email(subject, message, destinatarios)

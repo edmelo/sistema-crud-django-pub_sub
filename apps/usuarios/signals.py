@@ -6,6 +6,7 @@ Handlers de eventos do sistema Publish-Subscribe
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from apps.core.pubsub import event_handler, SystemEvents
+from apps.core.email import send_system_email
 from .models import Usuario, PerfilUsuario
 
 
@@ -21,7 +22,21 @@ def usuario_saved(sender, instance, created, **kwargs):
 @event_handler(SystemEvents.USUARIO_CRIADO)
 def handle_usuario_criado(data):
     """Handler para quando usuário é criado"""
-    print(f"📧 Enviando email de boas-vindas para {data.get('email')}")
+    email = data.get('email')
+    username = data.get('username') or ''
+    if not email:
+        # sem e-mail não há para quem enviar — apenas registrar
+        print(f"Usuário criado sem e-mail definido: {username}")
+        return
+
+    subject = "Bem-vindo(a) ao sistema"
+    message = (
+        f"Olá {username},\n\n"
+        "Sua conta foi criada com sucesso! Você já pode acessar o sistema.\n\n"
+        "Qualquer dúvida, responda este e-mail.\n"
+    )
+
+    send_system_email(subject, message, [email])
 
 
 @event_handler(SystemEvents.USUARIO_LOGIN)

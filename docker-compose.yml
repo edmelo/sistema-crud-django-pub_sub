@@ -7,6 +7,8 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
+      # armazenar arquivos estáticos gerados pelo collectstatic em um volume nomeado
+      - static_volume:/app/staticfiles
       - media_volume:/app/media
     environment:
       - DEBUG=True
@@ -30,9 +32,11 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./static:/app/static
-      - media_volume:/app/media
+      # montar o diretório contendo arquivos de configuração (ex: default.conf)
+      - ./nginx_conf:/etc/nginx/conf.d:ro
+      # nginx deve servir os arquivos criados por collectstatic (STATIC_ROOT)
+      - static_volume:/app/staticfiles:ro
+      - media_volume:/app/media:ro
     depends_on:
       - web
     networks:
@@ -41,6 +45,7 @@ services:
 volumes:
   media_volume:
   redis_data:
+  static_volume:
 
 networks:
   app-network:
